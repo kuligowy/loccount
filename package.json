@@ -1,0 +1,14 @@
+{
+  "name": "loccount",
+  "version": "1.0.0",
+  "description": "locall expense account manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "kuligowy",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
