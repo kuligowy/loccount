@@ -48,14 +48,10 @@ router.get('/loccount/:loccount', function(req, res, next) {
         .exec();
     })
     .then(entries => {
-      //entries.reverse();
       for (let idx = 0; idx < entries.length; idx++) {
         if(idx == 0)
           entries[idx].difference = entries[idx].amount || 0;
-
         if (idx + 1 < entries.length) {
-          //logger.debug('entry 1 %s', entries[idx])
-          // logger.debug('entry 2 %s', entries[idx+1])
            logger.debug('idx %s, idx+1 %s',idx, idx-1)
            logger.debug('%s, %s',entries[idx].title,entries[(idx + 1)].title)
           entries[idx+1]["difference"] = entries[idx].difference + entries[(idx + 1)].amount;
