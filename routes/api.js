@@ -22,13 +22,9 @@ router.get('/loccount/:loccount', function(req, res, next) {
   let count;
   let page = req.query.page - 1 || 0;
   let size = parseInt(req.query.size) || 10;
-  let query = {
-    loccount: req.params.loccount
-  };
+  let query = { loccount: req.params.loccount };
   ///////
-  LoccountEntry.count({
-      loccount: req.params.loccount
-    }).exec()
+  LoccountEntry.count({ loccount: req.params.loccount }).exec()
     .then(count => {
       logger.debug('count %s', count);
       count < page * size
@@ -37,32 +33,25 @@ router.get('/loccount/:loccount', function(req, res, next) {
         .find(query)
         .limit(size)
         .skip(page === 0 ? 0 : (page * size) - size)
-        .sort({
-          txDate: 1
-          //title: 1
-        })
-        .select({
-          __v: 0
-        })
+        .sort({ txDate: 1 })
+        .select({ __v: 0 })
         .lean()
         .exec();
     })
     .then(entries => {
       for (let idx = 0; idx < entries.length; idx++) {
-        if(idx == 0)
+        if (idx == 0)
           entries[idx].difference = entries[idx].amount || 0;
         if (idx + 1 < entries.length) {
-           logger.debug('idx %s, idx+1 %s',idx, idx-1)
-           logger.debug('%s, %s',entries[idx].title,entries[(idx + 1)].title)
-          entries[idx+1]["difference"] = entries[idx].difference + entries[(idx + 1)].amount;
+          logger.debug('idx %s, idx+1 %s', idx, idx - 1)
+          logger.debug('%s, %s', entries[idx].title, entries[(idx + 1)].title)
+          entries[idx + 1]["difference"] = entries[idx].difference + entries[(idx + 1)].amount;
         }
       }
       entries.reverse();
       res.json(entries)
     })
-    .catch(function(error) {
-      logger.error(error);
-    })
+    .catch(function(error) { logger.error(error); })
 });
 
 module.exports = router;
