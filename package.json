@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "babel-node": "babel-node --presets=es2015",
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
@@ -17,6 +18,8 @@
     "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "nodemon": "^1.12.5"
   }
 }
