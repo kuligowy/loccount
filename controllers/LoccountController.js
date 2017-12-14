@@ -18,14 +18,13 @@ const getEachOne = LoccountEntry.aggregate([{ $group: loccountInfoQuery("$loccou
 const getCombined = LoccountEntry.aggregate([{ $group: loccountInfoQuery(null) }]); //.exec();
 
 module.exports = {
-  getLoccounts: function(req, res, next) {
-    return Promise.all([getEachOne, getCombined]).then(function([loccounts, combined]) {
-      if (combined && combined.length > 0) {
-        combined[0]._id = 'combined';
-      }
-      res.json(loccounts.concat(combined));
-      return
-    });
+  getLoccounts: async function(req, res, next) {
+    const eachOne = await getEachOne;
+    const combined = await getCombined;
+    if (combined && combined.length > 0) {
+      combined[0]._id = 'combined';
+    }
+    res.json(eachOne.concat(combined));
   },
   //TODO switch from using LP to txDate after stable algorithm
   getLoccountEntries: function(req, res, next) {
