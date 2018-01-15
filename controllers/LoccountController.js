@@ -2,6 +2,9 @@ var { LoccountEntry } = require('../models/Loccount');
 var mongoose = require('mongoose');
 var log4js = require('log4js');
 var logger = log4js.getLogger('loccount-controller');
+var csv = require('csv');
+var fs = require('fs');
+
 
 const loccountInfoQuery = function(inputId) {
   return {
@@ -18,6 +21,28 @@ const getEachOne = LoccountEntry.aggregate([{ $group: loccountInfoQuery("$loccou
 const getCombined = LoccountEntry.aggregate([{ $group: loccountInfoQuery(null) }]); //.exec();
 
 module.exports = {
+  importFile: function(req, res, next){
+
+    var rows = [];
+    fs.readFile('files/operations.txt', "utf8", function(err, data) {
+      console.log(data);
+      rows = csv.parse(data,{from: 2,delimiter:'\t',comment:"#"},function(err,out){
+        rows = out;
+        rows.map(row=>{
+          console.log(row)
+          let entry = new LoccountEntry({
+            title: row[4]==='' ? row[8] : row[4],
+            amount: row[5].replace(",","."),
+            loccount:'M-account',
+            txDate: new Date(row[0].substring(0,4),row[0].substring(6,4),row[0].substring(8,6))
+          }).save();
+        })
+        res.json({status: "done"});
+      });
+    });
+
+    return
+  },
   getLoccounts: async function(req, res, next) {
     const eachOne = await getEachOne;
     const combined = await getCombined;
